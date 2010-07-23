@@ -12,7 +12,7 @@ set :run_method, :run
 set :scm, :git
 set :scm_username, "aybarra"
 set :scm_password, "aA187759!"
-et :branch, "master"
+set :branch, "master"
 set :deploy_to, "/usr2/aybarra/deployed/#{application}"
 set :mongrel_port, "4444"                           # Mongrel port that was assigned to you
 set :mongrel_nodes, "1"
