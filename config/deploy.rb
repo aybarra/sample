@@ -6,7 +6,7 @@ set :deploy_via, :remote_cache
 
 
 set :application, "sample"
-set :repository,  "git@github:aybarra/sample.git"
+set :repository,  "git@github.com:aybarra/sample.git"
 set :use_sudo, false
 set :run_method, :run
 set :scm, :git
@@ -14,8 +14,8 @@ set :scm_username, "aybarra"
 set :scm_password, "aA187759!"
 set :branch, "master"
 set :deploy_to, "/usr2/aybarra/deployed/#{application}"
-set :mongrel_port, "4444"                           # Mongrel port that was assigned to you
-set :mongrel_nodes, "1"
+#set :mongrel_port, "4444"                           # Mongrel port that was assigned to you
+#set :mongrel_nodes, "1"
 # Or: `accurev`, `bzr`, `cvs`, `darcs`, `git`, `mercurial`, `perforce`, `subversion` or `none`
 
 role :web, "localhost"                          # Your HTTP server, Apache/etc
