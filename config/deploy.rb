@@ -1,38 +1,39 @@
-default_run_options[:pty] = true
 
-set :user, "aybarra"
-set :password, "aA187759!"
-set :deploy_via, :remote_cache
-
-
-set :application, "sample"
-set :repository,  "git@github.com:aybarra/sample.git"
-set :use_sudo, false
-set :run_method, :run
-set :scm, :git
-set :scm_username, "aybarra"
-set :scm_password, "aA187759!"
-set :branch, "master"
+set :application, "sample2"
+set :repository,  "git@github.com:aybarra/sample2.git"
 set :deploy_to, "/usr2/aybarra/deployed/#{application}"
-#set :mongrel_port, "4444"                           # Mongrel port that was assigned to you
-#set :mongrel_nodes, "1"
-# Or: `accurev`, `bzr`, `cvs`, `darcs`, `git`, `mercurial`, `perforce`, `subversion` or `none`
+set :deploy_via, :remote_cache
+set :user, "aybarra"
+set :use_sudo, false
+ssh_options[:port] = 222
 
-role :web, "localhost"                          # Your HTTP server, Apache/etc
-role :app, "localhost"                          # This may be the same as your `Web` server
-role :db,  "localhost", :primary => true # This is where Rails migrations will run
-#role :db,  "your slave db-server here"
+role :app, "000.00.00.000"
+role :web, "000.00.00.000"
+role :db,  "000.00.00.000", :primary => true
 
-# If you are using Passenger mod_rails uncomment this:
-# if you're still using the script/reapear helper you will need
-# these http://github.com/rails/irs_process_scripts
+after 'deploy:update_code', 'deploy:upload_database_yml'
+after 'deploy:update_code', 'deploy:create_symlinks'
 
-# namespace :deploy do
-#   task :start do ; end
-#   task :stop do ; end
-#   task :restart, :roles => :app, :except => { :no_release => true } do
-#     run "#{try_sudo} touch #{File.join(current_path,'tmp','restart.txt')}"
-#   end
-# end
+namespace :deploy do
+  task :restart do
+    run "/usr/bin/mongrel_rails cluster::stop -C #{deploy_to}/shared/config/mongrel_cluster.yml"
+    run "/usr/bin/mongrel_rails cluster::start -C #{deploy_to}/shared/config/mongrel_cluster.yml"
+  end
+end
 
+namespace :deploy do
+  task :upload_database_yml do
+    put(File.read('config/database.yml'), "#{release_path}/config/database.yml", :mode => 0444)
+  end
+end
+
+namespace :deploy do
+  task :create_symlinks do
+    %w{avatars files headers}.each do |share|
+      run "rm -rf #{release_path}/public/#{share}"
+      run "mkdir -p #{shared_path}/system/#{share}"
+      run "ln -nfs #{shared_path}/system/#{share} #{release_path}/public/#{share}"
+    end
+  end
+end
 
